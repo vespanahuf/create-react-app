@@ -1,38 +1,74 @@
----
-id: folder-structure
-title: Folder Structure
----
+import React, { useState } from "react";
 
-After creation, your project should look like this:
+const thaiFoods = [
+  "ผัดไทย",
+  "ต้มยำกุ้ง",
+  "แกงเขียวหวาน",
+  "ข้าวมันไก่",
+  "หมูกรอบผัดพริกแกง",
+  "ส้มตำไทย",
+  "ข้าวผัดกะเพรา",
+  "ขนมจีนแกงไก่",
+  "แกงมัสมั่นเนื้อ",
+  "ไข่เจียวหมูสับ",
+];
 
-```
-my-app/
-  README.md
-  node_modules/
-  package.json
-  public/
-    index.html
-    favicon.ico
-  src/
-    App.css
-    App.js
-    App.test.js
-    index.css
-    index.js
-    logo.svg
-```
+export default function ThaiFoodMenuApp() {
+  const [selected, setSelected] = useState([]);
+  const [filter, setFilter] = useState("");
 
-For the project to build, **these files must exist with exact filenames**:
+  const toggleSelect = (food) => {
+    setSelected((prev) =>
+      prev.includes(food)
+        ? prev.filter((item) => item !== food)
+        : [...prev, food]
+    );
+  };
 
-- `public/index.html` is the page template;
-- `src/index.js` is the JavaScript entry point.
+  const filteredFoods = thaiFoods.filter((food) =>
+    food.toLowerCase().includes(filter.toLowerCase())
+  );
 
-You can delete or rename the other files.
+  return (
+    <div className="min-h-screen bg-gradient-to-r from-blue-900 to-indigo-800 text-white p-8">
+      <h1 className="text-3xl font-bold mb-4">🍜 เลือกเมนูอาหารไทย</h1>
 
-You may create subdirectories inside `src`. For faster rebuilds, only files inside `src` are processed by webpack. You need to **put any JS and CSS files inside `src`**, otherwise webpack won’t see them.
+      <input
+        type="text"
+        placeholder="ค้นหาเมนู..."
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)}
+        className="p-2 rounded w-full mb-6 text-black"
+      />
 
-Only files inside `public` can be used from `public/index.html`. Read instructions below for using assets from JavaScript and HTML.
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {filteredFoods.map((food, index) => (
+          <button
+            key={index}
+            onClick={() => toggleSelect(food)}
+            className={`p-4 rounded-xl shadow-md text-center text-lg font-medium transition transform hover:scale-105 ${
+              selected.includes(food)
+                ? "bg-green-500"
+                : "bg-white text-black"
+            }`}
+          >
+            {food}
+          </button>
+        ))}
+      </div>
 
-You can, however, create more top-level directories. They will not be included in the production build so you can use them for things like documentation.
-
-If you have Git installed and your project is not part of a larger repository, then a new repository will be initialized resulting in an additional top-level `.git` directory.
+      <div className="mt-10">
+        <h2 className="text-2xl font-semibold mb-2">✅ เมนูที่เลือก:</h2>
+        {selected.length > 0 ? (
+          <ul className="list-disc list-inside text-lg">
+            {selected.map((food, idx) => (
+              <li key={idx}>{food}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>ยังไม่ได้เลือกเมนูใดเลย</p>
+        )}
+      </div>
+    </div>
+  );
+}
